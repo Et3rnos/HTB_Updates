@@ -1,0 +1,25 @@
+{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning"
+      }
+    },
+    "WriteTo": [
+      "Console",
+      {
+        "Name": "File",
+        "Args": {
+          "path": "logs/log.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ]
+  },
+  "Token": "",
+  "ConnectionString": "server=;port=;database=;user=;password=",
+  "HTBUsername": "", //AKA email
+  "HTBPassword": "",
+  "V1ApiToken": ""
+}

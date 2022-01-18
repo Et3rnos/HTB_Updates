@@ -1,0 +1,54 @@
+﻿using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using HTB_Updates_Discord_Bot.Models;
+using HTB_Updates_Discord_Bot.Models.Database;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HTB_Updates_Discord_Bot.Modules
+{
+    [Name("owner")]
+    public class OwnerModule : ModuleBase<SocketCommandContext>
+    {
+        private readonly DiscordSocketClient _client;
+        private readonly CommandService _commands;
+        private readonly DatabaseContext _context;
+
+        private OwnerModule(DiscordSocketClient client, CommandService commands, DatabaseContext context)
+        {
+            _client = client;
+            _commands = commands;
+            _context = context;
+        }
+
+        [Command("announce")]
+        [Summary("Announces something in all guilds")]
+        [RequireOwner]
+        public async Task Announce(string text)
+        {
+            var eb = new EmbedBuilder
+            {
+                Color = Color.DarkGreen,
+                Title = "Announcement",
+                Description = text
+            };
+            var guilds = await _context.DiscordGuilds.AsQueryable().ToListAsync();
+            foreach (var guild in guilds)
+            {
+                try
+                {
+                    var channel = _client.GetGuild(guild.GuildId).GetTextChannel(guild.ChannelId);
+                    await channel.SendMessageAsync(embed: eb.Build());
+                }
+                catch { continue; }
+            }
+        }
+    }
+}
