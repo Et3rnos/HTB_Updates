@@ -87,7 +87,11 @@ namespace HTB_Updates_Discord_Bot
 
             using var scope = _services.CreateScope();
             var solvesChecker = new SolvesChecker(_client, scope.ServiceProvider);
-            await solvesChecker.Run();
+            var profileUpdater = new ProfileUpdater(scope.ServiceProvider);
+            _ = solvesChecker.Run();
+            await Task.Delay(5000);
+            _ = profileUpdater.Run();
+            await Task.Delay(Timeout.Infinite);
         }
 
         private async Task InitCommands()
