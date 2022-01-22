@@ -339,7 +339,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             eb.WithColor(Color.DarkGreen);
 
             //Check if the guild is set up before proceed
-            var dGuild = await _context.DiscordGuilds.Include(x => x.DiscordUsers.Take(10)).ThenInclude(x => x.HTBUser).FirstOrDefaultAsync(x => x.GuildId == Context.Guild.Id);
+            var dGuild = await _context.DiscordGuilds.Include(x => x.DiscordUsers.OrderByDescending(x => x.HTBUser.Score).Take(10)).ThenInclude(x => x.HTBUser).FirstOrDefaultAsync(x => x.GuildId == Context.Guild.Id);
             if (dGuild == null)
             {
                 eb.WithTitle("Leaderboard Error");
@@ -348,6 +348,7 @@ namespace HTB_Updates_Discord_Bot.Modules
                 return;
             }
 
+            //Say whatever you want, I'm not removing this
             var dUsers = dGuild.DiscordUsers.OrderByDescending(x => x.HTBUser.Score).Take(10).ToList();
 
             if (!dUsers.Any())

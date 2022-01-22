@@ -131,6 +131,7 @@ namespace HTB_Updates_Discord_Bot.Modules
         private Embed GetHelpEmbed(CommandService commandService)
         {
             var eb = new EmbedBuilder();
+            eb.WithColor(Color.DarkGreen);
             eb.WithTitle("Available Commands");
 
             var mainCommandsNames = new string[] { "link" };
@@ -188,6 +189,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             if (module == null) return null;
 
             var eb = new EmbedBuilder();
+            eb.WithColor(Color.DarkGreen);
             eb.WithTitle("Available Commands");
 
             foreach (var command in module.Commands)
@@ -276,5 +278,30 @@ Our best verified player is `{bestPlayer?.Username}` with `{bestPlayer?.Score} p
             eb.AddField("Q: There was still no announcement!", "A: It may be a bot problem. Message Et3rnos#6556 and he will hopefully fix it.");
             await ReplyAsync(embed: eb.Build());
         }
+        
+        /* Idea in stand by
+        [Command("giveaway")]
+        [Summary("Prints information about our giveaway")]
+        public async Task Giveaway()
+        {
+            var uniqueUsersCount = await _context.HTBUsers.CountAsync();
+
+            var eb = new EmbedBuilder();
+            eb.WithColor(Color.DarkGreen);
+            eb.WithTitle("Giveaway Information");
+            eb.WithThumbnailUrl("https://i.imgur.com/3h9wG3Y.png");
+            eb.WithDescription($@"
+**Prize: ** HTB Vip (1 month)
+**Alternative Prize: ** Discord Nitro (1 month)
+
+**Eligibility Rules**
+• Be verified
+• Solved at least one challenge/box in the previous 30 days
+
+**Draw date**
+When this bot reaches 200 unique users (currently `{uniqueUsersCount}`)
+");
+            await ReplyAsync(embed: eb.Build());
+        }*/
     }
 }
