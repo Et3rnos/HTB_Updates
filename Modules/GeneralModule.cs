@@ -104,15 +104,12 @@ namespace HTB_Updates_Discord_Bot.Modules
                     var oldHTBUser = dUser.HTBUser;
                     dUser.HTBUser = htbUser;
                     dUser.Verified = false;
-
-                    //Delete the old HTB user if there is no other discord user linked to that HTB account
-                    if (oldHTBUser.DiscordUsers.Count == 1)
-                    {
-                        await _context.Entry(oldHTBUser).Collection(x => x.Solves).LoadAsync();
-                        _context.HTBUsers.Remove(oldHTBUser);
-                    }
                 }
             }
+
+            //Clean unlinked htb users
+            var htbUsers = await _context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            _context.HTBUsers.RemoveRange(htbUsers);
 
             await _context.SaveChangesAsync();
 
@@ -181,17 +178,12 @@ namespace HTB_Updates_Discord_Bot.Modules
 
             if (dUser != null)
             {
-                if (dUser.HTBUser.DiscordUsers.Count == 1)
-                {
-                    //Delete the HTB user and the discord one if there is no other discord user linked to that HTB account
-                    await _context.Entry(dUser.HTBUser).Collection(x => x.Solves).LoadAsync();
-                    _context.HTBUsers.Remove(dUser.HTBUser);
-                }
-                else
-                {
-                    //Delete just the discord user
-                    _context.DiscordUsers.Remove(dUser);
-                }
+                
+                _context.DiscordUsers.Remove(dUser);
+
+                //Clean unlinked htb users
+                var htbUsers = await _context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+                _context.HTBUsers.RemoveRange(htbUsers);
 
                 await _context.SaveChangesAsync();
 

@@ -99,6 +99,8 @@ namespace HTB_Updates_Discord_Bot
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
             _client.MessageReceived += HandleCommandAsync;
+            _client.LeftGuild += HandleLeftGuild;
+            _client.UserLeft += HandleUserLeft;
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -116,6 +118,44 @@ namespace HTB_Updates_Discord_Bot
 
             using var scope = _services.CreateScope();
             await _commands.ExecuteAsync(context, argPos, scope.ServiceProvider);
+        }
+
+        private async Task HandleLeftGuild(SocketGuild socketGuild)
+        {
+            using var scope = _services.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
+
+            var context = serviceProvider.GetRequiredService<DatabaseContext>();
+            var guild = await context.DiscordGuilds.FirstOrDefaultAsync(x => x.GuildId == socketGuild.Id);
+            if (guild == null) return;
+
+            context.DiscordGuilds.Remove(guild);
+
+            //Clean unlinked htb users
+            var htbUsers = await context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            context.HTBUsers.RemoveRange(htbUsers);
+
+            await context.SaveChangesAsync();
+            Log.Information($"This bot was removed from {socketGuild.Name} guild ({socketGuild.Id})");
+        }
+
+        private async Task HandleUserLeft(SocketGuildUser socketGuildUser)
+        {
+            using var scope = _services.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
+
+            var context = serviceProvider.GetRequiredService<DatabaseContext>();
+            var discordUser = await context.DiscordUsers.FirstOrDefaultAsync(x => x.DiscordId == socketGuildUser.Id && x.Guild.GuildId == socketGuildUser.Guild.Id);
+            if (discordUser == null) return;
+
+            context.DiscordUsers.Remove(discordUser);
+
+            //Clean unlinked htb users
+            var htbUsers = await context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            context.HTBUsers.RemoveRange(htbUsers);
+
+            await context.SaveChangesAsync();
+            Log.Information($"User {socketGuildUser.Username} ({socketGuildUser.Id}) left {socketGuildUser.Guild.Name} ({socketGuildUser.Guild.Id})");
         }
     }
 }

@@ -50,5 +50,35 @@ namespace HTB_Updates_Discord_Bot.Modules
                 catch { continue; }
             }
         }
+
+        [Command("healthcheck")]
+        [Summary("Performs a health check")]
+        [RequireOwner]
+        public async Task HealthCheck()
+        {
+            var databaseGuilds = await _context.DiscordGuilds.AsQueryable().ToListAsync();
+            var botGuilds = _client.Guilds;
+
+            var uselessGuilds = databaseGuilds.Where(x => !botGuilds.Select(x => x.Id).Contains(x.GuildId));
+            if (uselessGuilds.Any())
+            {
+                await ReplyAsync($"{uselessGuilds.Count()} useless guilds were found:\n```\n{string.Join('\n', uselessGuilds.Select(x => x.GuildId))}\n```");
+            } 
+            else
+            {
+                await ReplyAsync("No useless guilds were found.");
+            }
+
+            var uselessHtbUsers = await _context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            if (uselessHtbUsers.Any())
+            {
+                await ReplyAsync($"{uselessHtbUsers.Count()} useless HTB users were found:\n```\n{string.Join('\n', uselessHtbUsers.Select(x => x.Username))}\n```");
+            }
+            else
+            {
+                await ReplyAsync("No useless HTB users were found.");
+            }
+
+        }
     }
 }
