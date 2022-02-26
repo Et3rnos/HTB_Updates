@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace HTB_Updates_Discord_Bot.Services
@@ -45,6 +46,7 @@ namespace HTB_Updates_Discord_Bot.Services
         }
 
         public async Task<int> GetHTBIdByAccountId(string accountId) {
+            if (!Regex.IsMatch(accountId, @"^[a-zA-Z0-9]+$")) return -1;
             var response = await _client.GetAsync(AddTokenToQuery($"/api/users/identifier/{accountId}"));
             if (!response.IsSuccessStatusCode) {
                 return -1;
