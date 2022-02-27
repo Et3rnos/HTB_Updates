@@ -20,6 +20,7 @@ namespace HTB_Updates_Discord_Bot
 {
     class Program
     {
+        private bool initialized;
         private IConfigurationRoot configuration;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
@@ -75,32 +76,37 @@ namespace HTB_Updates_Discord_Bot
             return map.BuildServiceProvider();
         }
 
-        private async Task MainAsync() {
-            await InitCommands();
-
-            await _client.LoginAsync(TokenType.Bot, configuration.GetValue<string>("Token"));
-            await _client.StartAsync();
-
-            await _client.SetGameAsync("h.help", type: ActivityType.Playing);
-
-            await Task.Delay(5000);
-
-            using var scope = _services.CreateScope();
-            var solvesChecker = new SolvesChecker(_client, scope.ServiceProvider);
-            var profileUpdater = new ProfileUpdater(scope.ServiceProvider);
-            _ = solvesChecker.Run();
-            await Task.Delay(5000);
-            _ = profileUpdater.Run();
-            await Task.Delay(Timeout.Infinite);
-        }
-
-        private async Task InitCommands()
+        private async Task MainAsync()
         {
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
-
             _client.MessageReceived += HandleCommandAsync;
             _client.LeftGuild += HandleLeftGuild;
             _client.UserLeft += HandleUserLeft;
+            _client.Ready += HandleReady;
+
+            await _client.LoginAsync(TokenType.Bot, configuration.GetValue<string>("Token"));
+            await _client.StartAsync();
+            await _client.SetGameAsync("h.help", type: ActivityType.Playing);
+
+            await Task.Delay(Timeout.Infinite);
+        }
+
+        private async Task HandleReady()
+        {
+            if (!initialized)
+            {
+                var solvesChecker = new SolvesChecker(_services);
+                var releasesChecker = new ReleasesChecker(_services);
+                var profileUpdater = new ProfileUpdater(_services);
+
+                _ = solvesChecker.Run();
+                await Task.Delay(5000);
+                _ = releasesChecker.Run();
+                await Task.Delay(5000);
+                _ = profileUpdater.Run();
+
+                initialized = true;
+            }
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)

@@ -20,16 +20,14 @@ namespace HTB_Updates_Discord_Bot
 {
     class SolvesChecker
     {
-        private readonly DiscordSocketClient _client;
-        private readonly DatabaseContext _context;
-        private readonly IHTBApiV4Service _htbApiV4Service;
+        private readonly IServiceProvider _services;
+        private DiscordSocketClient client;
+        private DatabaseContext context;
+        private IHTBApiV4Service htbApiV4Service;
 
-        public SolvesChecker(DiscordSocketClient client, IServiceProvider services)
+        public SolvesChecker(IServiceProvider services)
         {
-            _client = client;
-            _htbApiV4Service = services.GetRequiredService<IHTBApiV4Service>();
-            _context = services.GetRequiredService<DatabaseContext>();
-            _context.Database.Migrate();
+            _services = services;
         }
 
         public async Task Run()
@@ -38,11 +36,14 @@ namespace HTB_Updates_Discord_Bot
             {
                 try
                 {
-                    Log.Information("Starting loop");
-                    var start = DateTime.UtcNow;
+                    using var scope = _services.CreateScope();
+                    var services = scope.ServiceProvider;
+                    client = services.GetRequiredService<DiscordSocketClient>();
+                    htbApiV4Service = services.GetRequiredService<IHTBApiV4Service>();
+                    context = services.GetRequiredService<DatabaseContext>();
+                    context.Database.Migrate();
 
-                    var htbUsers = await _context.HTBUsers.AsQueryable().ToListAsync();
-
+                    var htbUsers = await context.HTBUsers.ToListAsync();
                     if (!htbUsers.Any())
                     {
                         await Task.Delay(5000);
@@ -51,9 +52,7 @@ namespace HTB_Updates_Discord_Bot
                     }
 
                     var runningTasks = new List<Task>();
-
                     int delay = (10 * 60 * 1000) / htbUsers.Count;
-
                     foreach (var htbUser in htbUsers)
                     {
                         runningTasks.Add(CheckForSolves(htbUser));
@@ -61,8 +60,7 @@ namespace HTB_Updates_Discord_Bot
                     }
 
                     await Task.WhenAll(runningTasks);
-                    await _context.SaveChangesAsync();
-                    Log.Information($"Ending loop after {(DateTime.UtcNow - start).TotalSeconds}s");
+                    await context.SaveChangesAsync();
                 }
                 catch(Exception e)
                 {
@@ -77,7 +75,7 @@ namespace HTB_Updates_Discord_Bot
             List<Solve> currentSolves;
             try
             {
-                currentSolves = await _htbApiV4Service.GetSolves(user.HtbId);
+                currentSolves = await htbApiV4Service.GetSolves(user.HtbId);
             }
             catch (Exception e)
             {
@@ -91,7 +89,7 @@ namespace HTB_Updates_Discord_Bot
                 user.Score = score;
             }
 
-            await _context.Entry(user).Collection(x => x.Solves).LoadAsync();
+            await context.Entry(user).Collection(x => x.Solves).LoadAsync();
 
             var oldSolves = user.Solves;
             //oldSolves = new List<Solve>();
@@ -103,7 +101,7 @@ namespace HTB_Updates_Discord_Bot
 
             try
             {
-                user.Username = await _htbApiV4Service.GetUserNameById(user.HtbId);
+                user.Username = await htbApiV4Service.GetUserNameById(user.HtbId);
             }
             catch (Exception e)
             {
@@ -111,11 +109,11 @@ namespace HTB_Updates_Discord_Bot
                 return;
             }
 
-            await _context.Entry(user).Collection(x => x.DiscordUsers).LoadAsync();
+            await context.Entry(user).Collection(x => x.DiscordUsers).LoadAsync();
 
             foreach (var dUser in user.DiscordUsers)
             {
-                await _context.Entry(dUser).Reference(x => x.Guild).LoadAsync();
+                await context.Entry(dUser).Reference(x => x.Guild).LoadAsync();
 
                 foreach (var solve in newSolves) {
                     await AnnounceSolve(dUser, user, solve);
@@ -129,7 +127,7 @@ namespace HTB_Updates_Discord_Bot
         {
             try
             {
-                var channel = _client.GetGuild(dUser.Guild.GuildId).GetTextChannel(dUser.Guild.ChannelId);
+                var channel = client.GetGuild(dUser.Guild.GuildId).GetTextChannel(dUser.Guild.ChannelId);
 
                 var eb = new EmbedBuilder();
                 eb.WithColor(Color.DarkGreen);

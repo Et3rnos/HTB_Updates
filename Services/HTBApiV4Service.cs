@@ -1,4 +1,5 @@
 ﻿using HTB_Updates_Discord_Bot.Models;
+using HTB_Updates_Discord_Bot.Models.Api;
 using HTB_Updates_Discord_Bot.Models.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ namespace HTB_Updates_Discord_Bot.Services
 {
     public interface IHTBApiV4Service
     {
+        Task<List<UnreleasedMachine>> GetUnreleasedMachines();
         Task<List<Solve>> GetSolves(int id);
         Task<string> GetUserNameById(int id);
     }
@@ -54,6 +56,15 @@ namespace HTB_Updates_Discord_Bot.Services
             var response = await client.PostAsync("https://www.hackthebox.com/api/v4/login", content);
             dynamic json = JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
             token = new JwtSecurityToken((string)json.message?.access_token);
+        }
+
+        public async Task<List<UnreleasedMachine>> GetUnreleasedMachines()
+        {
+            var response = await MakeApiCall("https://www.hackthebox.com/api/v4/machine/unreleased");
+            dynamic json = JsonConvert.DeserializeObject(response);
+            var jArray = (JArray)json.data;
+            var unreleasedMachines = JsonConvert.DeserializeObject<List<UnreleasedMachine>>(jArray.ToString());
+            return unreleasedMachines;
         }
 
         public async Task<List<Solve>> GetSolves(int id)

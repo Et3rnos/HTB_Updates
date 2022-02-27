@@ -78,7 +78,6 @@ namespace HTB_Updates_Discord_Bot.Modules
             {
                 await ReplyAsync("No useless HTB users were found.");
             }
-
         }
     }
 }

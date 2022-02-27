@@ -20,14 +20,13 @@ namespace HTB_Updates_Discord_Bot
 {
     class ProfileUpdater
     {
-        private readonly DatabaseContext _context;
-        private readonly IHTBApiV4Service _htbApiV4Service;
+        private readonly IServiceProvider _services;
+        private DatabaseContext context;
+        private IHTBApiV4Service htbApiV4Service;
 
         public ProfileUpdater(IServiceProvider services)
         {
-            _htbApiV4Service = services.GetRequiredService<IHTBApiV4Service>();
-            _context = services.GetRequiredService<DatabaseContext>();
-            _context.Database.Migrate();
+            _services = services;
         }
 
         public async Task Run()
@@ -36,11 +35,13 @@ namespace HTB_Updates_Discord_Bot
             {
                 try
                 {
-                    Log.Information("Starting loop");
-                    var start = DateTime.UtcNow;
+                    using var scope = _services.CreateScope();
+                    var services = scope.ServiceProvider;
+                    htbApiV4Service = services.GetRequiredService<IHTBApiV4Service>();
+                    context = services.GetRequiredService<DatabaseContext>();
+                    context.Database.Migrate();
 
-                    var htbUsers = await _context.HTBUsers.AsQueryable().ToListAsync();
-
+                    var htbUsers = await context.HTBUsers.ToListAsync();
                     if (!htbUsers.Any())
                     {
                         await Task.Delay(60000);
@@ -49,9 +50,7 @@ namespace HTB_Updates_Discord_Bot
                     }
 
                     var runningTasks = new List<Task>();
-
                     int delay = (24 * 60 * 60 * 1000) / htbUsers.Count;
-
                     foreach (var htbUser in htbUsers)
                     {
                         runningTasks.Add(CheckForProfileChanges(htbUser));
@@ -59,8 +58,7 @@ namespace HTB_Updates_Discord_Bot
                     }
 
                     await Task.WhenAll(runningTasks);
-                    await _context.SaveChangesAsync();
-                    Log.Information($"Ending loop after {(DateTime.UtcNow - start).TotalSeconds}s");
+                    await context.SaveChangesAsync();
                 }
                 catch(Exception e)
                 {
@@ -75,7 +73,7 @@ namespace HTB_Updates_Discord_Bot
             string username;
             try
             {
-                username = await _htbApiV4Service.GetUserNameById(user.HtbId);
+                username = await htbApiV4Service.GetUserNameById(user.HtbId);
             }
             catch (Exception e)
             {
