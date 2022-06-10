@@ -15,20 +15,20 @@ Navigate to /Bot section
 Check all "Privileged Gateway Intents"
 Check "Send messages" and "Embed links" in "Bot permissions"
 
-# Configure appsettings.json
+# 2. Configure appsettings.json
 Copy Bot token to appsettings.json file parameter "Token"
 Add HTBUsername and HTBPassword
 Retrieve "App Tokens" from HTB(https://app.hackthebox.com/profile/settings)
 Set right "ConnectionString" (Make sure provided user has enough privileges)
 
-# Discord server
+# 3. Discord server
 Under "Applications" section, click on your bot application, and open the OAuth2 page.
 Navigate to URL Generator
 Under scopes check bot
 List of permissions will appear. Check "Send messages" and "Embed links".
 Copy&Paste generated URL to the browser and invite bot to your server.
 
-# Extra tips
+# 4. Extra tips
 You might want to change dockerfile or docker-compose
 Make sure Bot permissions are right
 Make sure you have permissions on discord server where you want to add bot
