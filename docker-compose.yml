@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+    bot:
+        build: ./source
+        restart: unless-stopped
+        links:
+            - "db-server:database"
+    db-server:
+        image: mysql:8.0
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: "SET_PASSWORD"
+            MYSQL_DATABASE: "db_name"
+            MYSQL_USER: "db_user"
+            MYSQL_PASSWORD: "SET_PASSWORD"
+        volumes:
+            - ./data:/var/lib/mysql
+        cap_add:
+            - SYS_NICE
