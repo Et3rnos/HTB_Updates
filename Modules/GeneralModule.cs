@@ -245,7 +245,7 @@ namespace HTB_Updates_Discord_Bot.Modules
         [Command("solves")]
         [Summary("Prints all the users that solved that challenge/machine")]
         [RequireContext(ContextType.Guild)]
-        public async Task Solves(string name)
+        public async Task Solves([Remainder] string name)
         {
             //Create the embed
             var eb = new EmbedBuilder();

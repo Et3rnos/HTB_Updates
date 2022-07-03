@@ -173,7 +173,7 @@ namespace HTB_Updates_Discord_Bot.Modules
 
             eb.Description += "\n\n**Other Commands**";
 
-            foreach (var module in new string[] { "general", "extra" })
+            foreach (var module in new string[] { "general", "config", "extra" })
             {
                 eb.Description += $"\n`h.help {module}`";
             }
@@ -278,8 +278,8 @@ Our best verified player is `{bestPlayer?.Username}` with `{bestPlayer?.Score} p
             eb.AddField("Q: There was still no announcement!", "A: It may be a bot problem. Message Et3rnos#6556 and he will hopefully fix it.");
             await ReplyAsync(embed: eb.Build());
         }
-        
-        /* Idea in stand by
+
+        /*
         [Command("giveaway")]
         [Summary("Prints information about our giveaway")]
         public async Task Giveaway()
@@ -296,12 +296,30 @@ Our best verified player is `{bestPlayer?.Username}` with `{bestPlayer?.Score} p
 
 **Eligibility Rules**
 • Be verified
-• Solved at least one challenge/box in the previous 30 days
+• Solved at least one challenge/box in the previous 30 days to the draw 
 
 **Draw date**
 When this bot reaches 200 unique users (currently `{uniqueUsersCount}`)
 ");
             await ReplyAsync(embed: eb.Build());
-        }*/
+        }
+        */
+
+        [Command("suggest")]
+        [Summary("Suggests a new feature to the bot")]
+        public async Task Giveaway([Remainder] string suggestion)
+        {
+            var eb = new EmbedBuilder();
+            eb.WithColor(Color.DarkGreen);
+
+            eb.WithTitle("New suggestion");
+            eb.WithDescription(Format.Sanitize(suggestion));
+            eb.WithFooter($"From {Context.User.Username} ({Context.User.Id}) in {Context.Guild.Name}");
+
+            var owner = (await _client.GetApplicationInfoAsync()).Owner;
+            await owner.SendMessageAsync(embed: eb.Build());
+
+            await ReplyAsync("Your suggestion is safe :thumbsup:");
+        }
     }
 }

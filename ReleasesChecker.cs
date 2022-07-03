@@ -26,7 +26,7 @@ namespace HTB_Updates_Discord_Bot
         private DatabaseContext context;
         private IHTBApiV4Service htbApiV4Service;
 
-        private List<UnreleasedMachine> unreleasedMachines = new List<UnreleasedMachine>();
+        private List<UnreleasedMachine> unreleasedMachines = new();
 
         public ReleasesChecker(IServiceProvider services)
         {
@@ -44,9 +44,9 @@ namespace HTB_Updates_Discord_Bot
                     var services = scope.ServiceProvider;
                     htbApiV4Service = services.GetRequiredService<IHTBApiV4Service>();
 
-                    unreleasedMachines = await htbApiV4Service.GetUnreleasedMachines();
+                    unreleasedMachines = unreleasedMachines.UnionBy(await htbApiV4Service.GetUnreleasedMachines(), x => x.Id).ToList();
 
-                    await Task.Delay(3600 * 1000);
+                    await Task.Delay(TimeSpan.FromHours(1));
                 }
                 catch (Exception e)
                 {
@@ -67,7 +67,7 @@ namespace HTB_Updates_Discord_Bot
                     client = services.GetRequiredService<DiscordSocketClient>();
                     context = services.GetRequiredService<DatabaseContext>();
 
-                    foreach (var machine in unreleasedMachines.ToList())
+                    foreach (var machine in unreleasedMachines)
                     {
                         if (machine.Release > DateTime.UtcNow) continue;
 
@@ -78,9 +78,10 @@ namespace HTB_Updates_Discord_Bot
                         }
 
                         unreleasedMachines.Remove(machine);
+                        break;
                     }
 
-                    await Task.Delay(1000);
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
                 catch (Exception e)
                 {

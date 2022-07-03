@@ -3,6 +3,7 @@ using System;
 using HTB_Updates_Discord_Bot;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HTB_Updates_Discord_Bot.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220530111245_optional")]
+    partial class optional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +38,7 @@ namespace HTB_Updates_Discord_Bot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("HTBUpdates_DiscordGuilds", (string)null);
+                    b.ToTable("HTBUpdates_DiscordGuilds");
                 });
 
             modelBuilder.Entity("HTB_Updates_Discord_Bot.Models.Database.DiscordUser", b =>
@@ -63,7 +65,7 @@ namespace HTB_Updates_Discord_Bot.Migrations
 
                     b.HasIndex("HTBUserId");
 
-                    b.ToTable("HTBUpdates_DiscordUsers", (string)null);
+                    b.ToTable("HTBUpdates_DiscordUsers");
                 });
 
             modelBuilder.Entity("HTB_Updates_Discord_Bot.Models.Database.HTBUser", b =>
@@ -86,7 +88,7 @@ namespace HTB_Updates_Discord_Bot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("HTBUpdates_HTBUsers", (string)null);
+                    b.ToTable("HTBUpdates_HTBUsers");
                 });
 
             modelBuilder.Entity("HTB_Updates_Discord_Bot.Models.Shared.Solve", b =>
@@ -132,7 +134,7 @@ namespace HTB_Updates_Discord_Bot.Migrations
 
                     b.HasIndex("HTBUserId");
 
-                    b.ToTable("HTBUpdates_Solves", (string)null);
+                    b.ToTable("HTBUpdates_Solves");
                 });
 
             modelBuilder.Entity("HTB_Updates_Discord_Bot.Models.Database.DiscordUser", b =>

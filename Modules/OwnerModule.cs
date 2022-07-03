@@ -31,7 +31,7 @@ namespace HTB_Updates_Discord_Bot.Modules
         [Command("announce")]
         [Summary("Announces something in all guilds")]
         [RequireOwner]
-        public async Task Announce(string text)
+        public async Task Announce(string text, bool optional = true)
         {
             var eb = new EmbedBuilder
             {
@@ -39,11 +39,12 @@ namespace HTB_Updates_Discord_Bot.Modules
                 Title = "Announcement",
                 Description = text
             };
-            var guilds = await _context.DiscordGuilds.AsQueryable().ToListAsync();
+            var guilds = await _context.DiscordGuilds.ToListAsync();
             foreach (var guild in guilds)
             {
                 try
                 {
+                    if (optional && !guild.OptionalAnnouncements) continue;
                     var channel = _client.GetGuild(guild.GuildId).GetTextChannel(guild.ChannelId);
                     await channel.SendMessageAsync(embed: eb.Build());
                 }

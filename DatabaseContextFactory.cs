@@ -1,7 +1,9 @@
-﻿/*using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace HTB_Updates_Discord_Bot
@@ -10,12 +12,19 @@ namespace HTB_Updates_Discord_Bot
     {
         public DatabaseContext CreateDbContext(string[] args)
         {
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
+            .AddJsonFile("appsettings.json", false)
+            .Build();
+
+            var connectionString = configuration.GetValue<string>("ConnectionString");
+
             var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-            optionsBuilder.UseMySql(Program.CONNECTION_STRING,
-                    new MySqlServerVersion(new Version(5, 7)),
+            optionsBuilder.UseMySql(connectionString,
+                    MySqlServerVersion.AutoDetect(connectionString),
                     x => x.MigrationsHistoryTable("HTBUpdates_EFMigrationsHistory"));
 
             return new DatabaseContext(optionsBuilder.Options);
         }
     }
-}*/
+}

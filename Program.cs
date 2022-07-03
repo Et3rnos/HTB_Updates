@@ -78,6 +78,12 @@ namespace HTB_Updates_Discord_Bot
 
         private async Task MainAsync()
         {
+            using (var scope = _services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                await context.Database.MigrateAsync();
+            }
+
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
             _client.MessageReceived += HandleCommandAsync;
             _client.LeftGuild += HandleLeftGuild;
@@ -145,13 +151,13 @@ namespace HTB_Updates_Discord_Bot
             Log.Information($"This bot was removed from {socketGuild.Name} guild ({socketGuild.Id})");
         }
 
-        private async Task HandleUserLeft(SocketGuildUser socketGuildUser)
+        private async Task HandleUserLeft(SocketGuild guild, SocketUser user)
         {
             using var scope = _services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
 
             var context = serviceProvider.GetRequiredService<DatabaseContext>();
-            var discordUser = await context.DiscordUsers.FirstOrDefaultAsync(x => x.DiscordId == socketGuildUser.Id && x.Guild.GuildId == socketGuildUser.Guild.Id);
+            var discordUser = await context.DiscordUsers.FirstOrDefaultAsync(x => x.DiscordId == user.Id && x.Guild.GuildId == guild.Id);
             if (discordUser == null) return;
 
             context.DiscordUsers.Remove(discordUser);
@@ -161,7 +167,7 @@ namespace HTB_Updates_Discord_Bot
             context.HTBUsers.RemoveRange(htbUsers);
 
             await context.SaveChangesAsync();
-            Log.Information($"User {socketGuildUser.Username} ({socketGuildUser.Id}) left {socketGuildUser.Guild.Name} ({socketGuildUser.Guild.Id})");
+            Log.Information($"User {user.Username} ({user.Id}) left {guild.Name} ({guild.Id})");
         }
     }
 }
