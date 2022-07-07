@@ -77,7 +77,7 @@ namespace HTB_Updates_Discord_Bot
 
                     foreach (var machine in unreleasedMachines)
                     {
-                        if (machine.Release > DateTime.UtcNow) continue;
+                        if (machine.Release > DateTime.UtcNow.AddDays(3)) continue;
 
                         var guilds = await context.DiscordGuilds.ToListAsync();
                         foreach (var guild in guilds)
@@ -129,6 +129,12 @@ namespace HTB_Updates_Discord_Bot
             var avatar = Image.Load<Rgba32>(avatarBytes);
             avatar.Mutate(x => x.Resize(300, 300));
 
+            Image osImage;
+            if (machine.Os == "Windows") osImage = await Image.LoadAsync<Rgba32>("Files/win.png");
+            else osImage = await Image.LoadAsync<Rgba32>("Files/linux.png");
+            var height = (int)(((float)osImage.Size().Height / osImage.Size().Width) * 100);
+            osImage.Mutate(x => x.Resize(100, height));
+
             image.Mutate(x =>
             {
                 x.DrawText(new TextOptions(heading) { HorizontalAlignment = HorizontalAlignment.Center, Origin = new PointF(510, 40) }, machine.Name, SixLabors.ImageSharp.Color.White);
@@ -138,6 +144,7 @@ namespace HTB_Updates_Discord_Bot
                 x.DrawText(machine.Release.ToShortDateString(), body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 215.5f));
                 x.DrawText("-", body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 254.5f));
                 x.DrawImage(avatar, new Point(31, 31), 1);
+                x.DrawImage(osImage, new Point(231, 331 - height), 1);
             });
             await image.SaveAsPngAsync("Files/modified.png");
         }
