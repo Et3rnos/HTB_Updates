@@ -16,6 +16,14 @@ using Discord;
 using Serilog;
 using HTB_Updates_Discord_Bot.Services;
 using HTB_Updates_Discord_Bot.Models.Api;
+using SixLabors.ImageSharp;
+using Image = SixLabors.ImageSharp.Image;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using System.Net.Http;
+using System.Numerics;
 
 namespace HTB_Updates_Discord_Bot
 {
@@ -97,26 +105,41 @@ namespace HTB_Updates_Discord_Bot
             {
                 var channel = client.GetGuild(guild.GuildId).GetTextChannel(guild.ChannelId);
 
-                var eb = new EmbedBuilder();
-                eb.WithColor(Color.DarkGreen);
+                await MakeMachineCard(machine);
 
-                eb.WithTitle("A new machine was released!");
-
-                eb.Description += $"**Name:** {machine.Name}\n";
-                eb.Description += $"**OS:** {machine.Os}\n";
-                eb.Description += $"**Difficulty:** {machine.DifficultyText}\n";
-
-                if (!string.IsNullOrEmpty(machine.Avatar))
-                {
-                    eb.WithThumbnailUrl($"https://hackthebox.com{machine.Avatar}");
-                }
-
-                await channel.SendMessageAsync(embed: eb.Build());
+                await channel.SendFileAsync("Files/modified.png", "A new machine was released!");
             }
             catch (Exception e)
             {
                 Log.Error(e, $"There was an error while sending a message to: {guild.GuildId}/{guild.ChannelId}");
             }
+        }
+
+        public async Task MakeMachineCard(UnreleasedMachine machine)
+        {
+            using var image = await SixLabors.ImageSharp.Image.LoadAsync<Rgba32>("Files/card.png");
+            var collection = new FontCollection();
+            var family = collection.Add("Files/UbuntuMono-Regular.ttf");
+            var body = family.CreateFont(16);
+            var heading = family.CreateFont(30);
+
+            using var client = new HttpClient();
+            var response = await client.GetAsync("https://hackthebox.com" + machine.Avatar);
+            var avatarBytes = await response.Content.ReadAsByteArrayAsync();
+            var avatar = Image.Load<Rgba32>(avatarBytes);
+            avatar.Mutate(x => x.Resize(300, 300));
+
+            image.Mutate(x =>
+            {
+                x.DrawText(new TextOptions(heading) { HorizontalAlignment = HorizontalAlignment.Center, Origin = new PointF(510, 40) }, machine.Name, SixLabors.ImageSharp.Color.White);
+                x.DrawText(machine.Os, body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 95.5f));
+                x.DrawText(machine.DifficultyText, body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 135.5f));
+                x.DrawText("-", body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 175.5f));
+                x.DrawText(machine.Release.ToShortDateString(), body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 215.5f));
+                x.DrawText("-", body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 254.5f));
+                x.DrawImage(avatar, new Point(31, 31), 1);
+            });
+            await image.SaveAsPngAsync("Files/modified.png");
         }
     }
 }
