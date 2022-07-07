@@ -77,7 +77,7 @@ namespace HTB_Updates_Discord_Bot
 
                     foreach (var machine in unreleasedMachines)
                     {
-                        if (machine.Release > DateTime.UtcNow.AddDays(3)) continue;
+                        if (machine.Release > DateTime.UtcNow) continue;
 
                         var guilds = await context.DiscordGuilds.ToListAsync();
                         foreach (var guild in guilds)
