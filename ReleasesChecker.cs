@@ -135,14 +135,16 @@ namespace HTB_Updates_Discord_Bot
             var height = (int)(((float)osImage.Size().Height / osImage.Size().Width) * 100);
             osImage.Mutate(x => x.Resize(100, height));
 
+            var color = SixLabors.ImageSharp.Color.FromRgb(204, 204, 204);
+
             image.Mutate(x =>
             {
                 x.DrawText(new TextOptions(heading) { HorizontalAlignment = HorizontalAlignment.Center, Origin = new PointF(510, 40) }, machine.Name, SixLabors.ImageSharp.Color.White);
-                x.DrawText(machine.Os, body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 95.5f));
-                x.DrawText(machine.DifficultyText, body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 135.5f));
-                x.DrawText("-", body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 175.5f));
-                x.DrawText(machine.Release.ToShortDateString(), body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 215.5f));
-                x.DrawText("-", body, SixLabors.ImageSharp.Color.FromRgb(148, 155, 162), new PointF(510, 254.5f));
+                x.DrawText(machine.Os, body, color, new PointF(510, 95.5f));
+                x.DrawText(machine.DifficultyText, body, color, new PointF(510, 135.5f));
+                x.DrawText("-", body, color, new PointF(510, 175.5f));
+                x.DrawText(machine.Release.ToShortDateString(), body, color, new PointF(510, 215.5f));
+                x.DrawText("-", body, color, new PointF(510, 254.5f));
                 x.DrawImage(avatar, new Point(31, 31), 1);
                 x.DrawImage(osImage, new Point(231, 331 - height), 1);
             });
