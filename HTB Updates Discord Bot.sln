@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTB Updates Discord Bot", "HTB Updates Discord Bot.csproj", "{97845B90-313F-44CE-9897-3B3514CE3F7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTB Updates Discord Bot", "HTB Updates Discord Bot\HTB Updates Discord Bot.csproj", "{97845B90-313F-44CE-9897-3B3514CE3F7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTB Updates Shared Resources", "HTB Updates Shared Resources\HTB Updates Shared Resources.csproj", "{B887E808-DC45-417B-92FA-CAEE22926080}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTB Updates Website", "HTB Updates Website\HTB Updates Website.csproj", "{4988731C-874D-48CA-BD98-EE6A6D8FE550}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{97845B90-313F-44CE-9897-3B3514CE3F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97845B90-313F-44CE-9897-3B3514CE3F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97845B90-313F-44CE-9897-3B3514CE3F7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B887E808-DC45-417B-92FA-CAEE22926080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B887E808-DC45-417B-92FA-CAEE22926080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B887E808-DC45-417B-92FA-CAEE22926080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B887E808-DC45-417B-92FA-CAEE22926080}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4988731C-874D-48CA-BD98-EE6A6D8FE550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4988731C-874D-48CA-BD98-EE6A6D8FE550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4988731C-874D-48CA-BD98-EE6A6D8FE550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4988731C-874D-48CA-BD98-EE6A6D8FE550}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
