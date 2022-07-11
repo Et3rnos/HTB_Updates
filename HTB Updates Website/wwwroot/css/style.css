@@ -1,22 +1,49 @@
 body {
-	background-color: #141d2c !important;
-	font-family: 'Ubuntu Mono', monospace !important;
+    background-color: #141d2c !important;
+    font-family: 'Ubuntu Mono', monospace !important;
 }
 
 .cool-link {
-	color: inherit !important;
-	text-decoration: none !important;
-	padding-bottom: 2px !important;
-	border-bottom: 1px solid !important;
+    color: inherit !important;
+    text-decoration: none !important;
+    padding-bottom: 2px !important;
+    border-bottom: 1px solid !important;
 }
 
 .carousel-item {
-	height: 450px;
+    height: 450px;
 }
 
 .centered {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%,-50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.custom-text-input {
+    background-color: inherit !important;
+    border-color: white !important;
+    color: inherit !important;
+    border-radius: 5px;
+    padding: 5px 10px !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+    text-align: center !important;
+}
+
+.custom-text-input::placeholder {
+    color: #aaa;
+}
+
+table {
+    color: white !important;
+}
+
+th, td {
+    border-bottom: 2px solid #9fef00 !important;
+}
+
+tr {
+    line-height: 30px;
 }

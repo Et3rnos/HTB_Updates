@@ -23,6 +23,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using System.Net.Http;
 using System.Numerics;
+using System.IO;
 
 namespace HTB_Updates_Discord_Bot
 {
@@ -104,9 +105,9 @@ namespace HTB_Updates_Discord_Bot
             {
                 var channel = client.GetGuild(guild.GuildId).GetTextChannel(guild.ChannelId);
 
-                await MakeMachineCard(machine);
+                using var stream = await GetMachineCard(machine);
 
-                await channel.SendFileAsync("Files/modified.png", "A new machine was released!");
+                await channel.SendFileAsync(stream, "card.png", "A new machine was released!");
             }
             catch (Exception e)
             {
@@ -114,9 +115,9 @@ namespace HTB_Updates_Discord_Bot
             }
         }
 
-        public async Task MakeMachineCard(UnreleasedMachine machine)
+        public async Task<MemoryStream> GetMachineCard(UnreleasedMachine machine)
         {
-            using var image = await SixLabors.ImageSharp.Image.LoadAsync<Rgba32>("Files/card.png");
+            using var image = await Image.LoadAsync<Rgba32>("Files/card.png");
             var collection = new FontCollection();
             var family = collection.Add("Files/UbuntuMono-Regular.ttf");
             var body = family.CreateFont(16);
@@ -147,7 +148,9 @@ namespace HTB_Updates_Discord_Bot
                 x.DrawImage(avatar, new Point(31, 31), 1);
                 x.DrawImage(osImage, new Point(231, 331 - height), 1);
             });
-            await image.SaveAsPngAsync("Files/modified.png");
+            var stream = new MemoryStream();
+            await image.SaveAsPngAsync(stream);
+            return stream;
         }
     }
 }

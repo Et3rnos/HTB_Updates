@@ -1,0 +1,36 @@
+﻿@page
+@model DiscordUsersModel
+@{
+
+}
+<div class="container">
+    <img height="100" src="/img/htb.png" />
+    <h1><b>HTB Updates</b></h1>
+    <hr>
+    <p>Showing @Model.DiscordUsers.Count discord users</p>
+    <div class="table-responsive text-start">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Discord Id</th>
+                    <th>HTB User Id</th>
+                    <th>Guild Id</th>
+                    <th>Verified</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.DiscordUsers)
+                {
+                    <tr>
+                        <th>@user.DiscordUser.Id</th>
+                        <th>@user.DiscordUser.DiscordId</th>
+                        <th>@user.DiscordUser.HTBUserId</th>
+                        <th>@user.DiscordUser.GuildId</th>
+                        <th>@user.DiscordUser.Verified</th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

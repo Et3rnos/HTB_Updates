@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Serilog;
 
 namespace HTB_Updates_Website.Pages
 {
@@ -12,7 +13,7 @@ namespace HTB_Updates_Website.Pages
 
         public void OnGet()
         {
-
+            
         }
     }
 }
