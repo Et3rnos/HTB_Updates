@@ -137,30 +137,6 @@ namespace HTB_Updates_Discord_Bot
             {
                 var channel = client.GetGuild(dUser.Guild.GuildId).GetTextChannel(dUser.Guild.ChannelId);
 
-                /*
-                switch (solve.Type) {
-                    case "challenge":
-                        eb.WithTitle($"{htbUser.Username} just solved {solve.Name}");
-                        break;
-                    case "user":
-                        eb.WithTitle($"{htbUser.Username} just got user on {solve.Name}");
-                        break;
-                    case "root":
-                        eb.WithTitle($"{htbUser.Username} just got root on {solve.Name}");
-                        break;
-                }
-
-                eb.Description += $"**Discord User:** <@{dUser.DiscordId}>\n";
-
-                if (!string.IsNullOrEmpty(solve.ChallengeCategory)) {
-                    eb.Description += $"**Challenge Category:** {solve.ChallengeCategory}\n";
-                }
-                eb.Description += $"**Points Gained:** {solve.Points}\n";
-
-                if (!string.IsNullOrEmpty(solve.MachineAvatar)) {
-                    eb.WithThumbnailUrl($"https://hackthebox.com{solve.MachineAvatar}");
-                }*/
-
                 using var stream = await GetSolvesImage(dUser, htbUser, solve);
                 await channel.SendFileAsync(stream, "solve.png", "");
             }
@@ -172,8 +148,10 @@ namespace HTB_Updates_Discord_Bot
 
         public async Task<MemoryStream> GetSolvesImage(DiscordUser dUser, HTBUser htbUser, Solve solve)
         {
+            var framePath = dUser.Verified ? "Files/gold_frame.png" : "Files/frame.png";
+
             using var image = await Image.LoadAsync<Rgba32>("Files/solve.png");
-            using var frame = await Image.LoadAsync<Rgba32>("Files/frame.png");
+            using var frame = await Image.LoadAsync<Rgba32>(framePath);
             using var userImage = await Image.LoadAsync<Rgba32>("Files/user.png");
             using var rootImage = await Image.LoadAsync<Rgba32>("Files/root.png");
             userImage.Mutate(x => x.Resize(65, 60));
@@ -221,12 +199,12 @@ namespace HTB_Updates_Discord_Bot
 
             image.Mutate(x =>
             {
-                x.DrawImage(frame, new Point(12, 9), 1);
                 if (user != null)
                 {
                     x.DrawText(new TextOptions(top) { HorizontalAlignment = HorizontalAlignment.Right, Origin = new PointF(782, 15) }, $"AKA {user.Username}", SixLabors.ImageSharp.Color.White);
                     x.DrawImage(avatar, new Point(32, 29), 1);
                 }
+                x.DrawImage(frame, new Point(12, 9), 1);
                 if (isMachine) x.DrawImage(solveAvatar, new Point(660, 59), 1);
                 if (solve.Type == "user") x.DrawImage(userImage, new Point(731, 135), 1);
                 if (solve.Type == "root") x.DrawImage(rootImage, new Point(733, 135), 1);
