@@ -148,7 +148,8 @@ namespace HTB_Updates_Discord_Bot
 
         public async Task<MemoryStream> GetSolvesImage(DiscordUser dUser, HTBUser htbUser, Solve solve)
         {
-            var framePath = dUser.Verified ? "Files/gold_frame.png" : "Files/frame.png";
+            //var framePath = dUser.Verified ? "Files/gold_frame.png" : "Files/frame.png";
+            var framePath = "Files/frame.png";
 
             using var image = await Image.LoadAsync<Rgba32>("Files/solve.png");
             using var frame = await Image.LoadAsync<Rgba32>(framePath);
