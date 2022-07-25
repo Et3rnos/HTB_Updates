@@ -93,7 +93,7 @@ namespace HTB_Updates_Discord_Bot
 
             await _client.LoginAsync(TokenType.Bot, configuration.GetValue<string>("Token"));
             await _client.StartAsync();
-            await _client.SetGameAsync("h.help", type: ActivityType.Playing);
+            await _client.SetGameAsync("h.help | htbupdates.com", type: ActivityType.Playing);
 
             await Task.Delay(Timeout.Infinite);
         }
@@ -102,12 +102,14 @@ namespace HTB_Updates_Discord_Bot
         {
             if (!initialized)
             {
-                var solvesChecker = new SolvesChecker(_services);
+                //var solvesChecker = new SolvesChecker(_services);
                 var releasesChecker = new ReleasesChecker(_services);
                 var profileUpdater = new ProfileUpdater(_services);
+                var shoutboxListener = new ShoutboxListener(_services);
 
-                _ = solvesChecker.Run();
-                await Task.Delay(5000);
+                _ = shoutboxListener.Run();
+                //_ = solvesChecker.Run();
+                //await Task.Delay(5000);
                 _ = releasesChecker.Run();
                 await Task.Delay(5000);
                 _ = profileUpdater.Run();
