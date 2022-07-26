@@ -60,7 +60,7 @@ namespace HTB_Updates_Discord_Bot
                     }
 
                     var runningTasks = new List<Task>();
-                    int delay = (10 * 60 * 1000) / htbUsers.Count;
+                    int delay = (24 * 60 * 60 * 1000) / htbUsers.Count;
                     foreach (var htbUser in htbUsers)
                     {
                         runningTasks.Add(CheckForSolves(htbUser));

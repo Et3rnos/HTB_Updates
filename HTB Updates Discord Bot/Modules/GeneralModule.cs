@@ -79,6 +79,7 @@ namespace HTB_Updates_Discord_Bot.Modules
                 htbUser.HtbId = htbId;
                 htbUser.Username = await _htbApiV4Service.GetUserNameById(htbId);
                 htbUser.Solves = solves;
+                htbUser.Score = solves.Sum(x => x.Points);
                 htbUser.LastUpdated = DateTime.UtcNow;
 
                 await _context.HTBUsers.AddAsync(htbUser);
