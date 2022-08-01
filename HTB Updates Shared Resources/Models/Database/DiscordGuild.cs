@@ -14,6 +14,7 @@ namespace HTB_Updates_Shared_Resources.Models.Database
         public ulong GuildId { get; set; }
         public ulong ChannelId { get; set; }
         public bool OptionalAnnouncements { get; set; } = true;
+        public bool MessageNewMembers { get; set; } = false;
         public List<DiscordUser> DiscordUsers { get; set; } = new List<DiscordUser>();
     }
 }

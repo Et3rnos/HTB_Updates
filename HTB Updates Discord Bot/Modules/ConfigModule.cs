@@ -66,6 +66,12 @@ namespace HTB_Updates_Discord_Bot.Modules
                 else if (value == "disabled") guild.OptionalAnnouncements = false;
                 else await ReplyAsync("Invalid value");
             }
+            else if (key == "message_new_members")
+            {
+                if (value == "enabled") guild.MessageNewMembers = true;
+                else if (value == "disabled") guild.MessageNewMembers = false;
+                else await ReplyAsync("Invalid value");
+            }
             else
             {
                 await ReplyAsync("Invalid key name");
@@ -80,6 +86,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             var eb = new EmbedBuilder { Color = Color.DarkGreen };
             eb.WithTitle("Server Configuration");
             eb.Description = $"**optional_announcements:** `{(guild.OptionalAnnouncements ? "enabled" : "disabled")}` (enabled/disabled)\n";
+            eb.Description += $"**message_new_members:** `{(guild.MessageNewMembers ? "enabled" : "disabled")}` (enabled/disabled)\n";
 
 
             eb.Description += "\n**Want to change something?**\n";

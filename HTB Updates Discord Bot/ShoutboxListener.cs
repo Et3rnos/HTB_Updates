@@ -44,6 +44,7 @@ namespace HTB_Updates_Discord_Bot
             ws = new (new Uri("wss://ws-eu.pusher.com/app/97608bf7532e6f0fe898?protocol=7&client=js&version=5.1.1&flash=false"));
             ws.ReconnectionHappened.Subscribe(OnReconnect);
             ws.MessageReceived.Subscribe(OnMessage);
+            ws.ReconnectTimeout = TimeSpan.FromSeconds(30);
             await ws.Start();
         }
 

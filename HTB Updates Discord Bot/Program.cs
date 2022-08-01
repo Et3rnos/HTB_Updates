@@ -89,6 +89,7 @@ namespace HTB_Updates_Discord_Bot
             _client.MessageReceived += HandleCommandAsync;
             _client.LeftGuild += HandleLeftGuild;
             _client.UserLeft += HandleUserLeft;
+            _client.UserJoined += HandleUserJoined;
             _client.Ready += HandleReady;
 
             await _client.LoginAsync(TokenType.Bot, configuration.GetValue<string>("Token"));
@@ -171,6 +172,21 @@ namespace HTB_Updates_Discord_Bot
 
             await context.SaveChangesAsync();
             Log.Information($"User {user.Username} ({user.Id}) left {guild.Name} ({guild.Id})");
+        }
+
+        private async Task HandleUserJoined(SocketGuildUser user)
+        {
+            using var scope = _services.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
+
+            var context = serviceProvider.GetRequiredService<DatabaseContext>();
+            var guild = await context.DiscordGuilds.FirstOrDefaultAsync(x => x.GuildId == user.Guild.Id);
+            if (guild == null || !guild.MessageNewMembers) return;
+
+            var eb = new EmbedBuilder { Color = Color.DarkGreen };
+            eb.WithTitle($"Welcome to {Format.Sanitize(user.Guild.Name)}");
+            eb.WithDescription($"This bot announces your HackTheBox solves in real-time.\nAll your have to do is send the following message in the server:\n\n`h.link <your_htb_username>`\n\nSolves are announced in <#{guild.ChannelId}>\nFor more information please check <https://htbupdates.com>");
+            await user.SendMessageAsync(embed: eb.Build());
         }
     }
 }
