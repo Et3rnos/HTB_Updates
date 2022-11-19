@@ -12,6 +12,7 @@ namespace HTB_Updates_Shared_Resources
         public DbSet<DiscordUser> DiscordUsers { get; set; }
         public DbSet<DiscordGuild> DiscordGuilds { get; set; }
         public DbSet<Solve> Solves { get; set; }
+        public DbSet<Supporter> Supporters { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
