@@ -26,13 +26,14 @@ using System.Net.Http;
 using Websocket.Client;
 using Websocket.Client.Models;
 using HtmlAgilityPack;
+using PusherClient;
 
 namespace HTB_Updates_Discord_Bot
 {
     class ShoutboxListener
     {
         private readonly IServiceProvider _services;
-        private WebsocketClient ws;
+        private Pusher pusher;
 
         public ShoutboxListener(IServiceProvider services)
         {
@@ -41,42 +42,27 @@ namespace HTB_Updates_Discord_Bot
 
         public async Task Run()
         {
-            ws = new (new Uri("wss://ws-eu.pusher.com/app/97608bf7532e6f0fe898?protocol=7&client=js&version=5.1.1&flash=false"));
-            ws.ReconnectionHappened.Subscribe(OnReconnect);
-            ws.MessageReceived.Subscribe(OnMessage);
-            ws.DisconnectionHappened.Subscribe(OnDisconnect);
-            ws.ReconnectTimeout = TimeSpan.FromSeconds(30);
-            ws.ErrorReconnectTimeout = TimeSpan.FromSeconds(30);
+            pusher = new("97608bf7532e6f0fe898", new PusherOptions
+            {
+                Cluster = "eu",
+                Encrypted = true
+            });
+            var ownsChannel = await pusher.SubscribeAsync("owns-channel");
+            ownsChannel.Bind("display-info", OnOwn);
             await Task.Delay(2000);
             //CheckForSolves(183581);
-            await ws.Start();
+            await pusher.ConnectAsync();
         }
 
-        private void OnDisconnect(DisconnectionInfo info)
+        private void OnOwn(PusherEvent eventData)
         {
-            ws.Reconnect();
-        }
-
-        private void OnReconnect(ReconnectionInfo info)
-        {
-            ws.Send("{\"event\":\"pusher:subscribe\",\"data\":{\"auth\":\"\",\"channel\":\"owns-channel\"}}");
-        }
-
-        private void OnMessage(ResponseMessage message)
-        {
-            dynamic json = JsonConvert.DeserializeObject(message.Text);
-            if ((string)json.channel != "owns-channel" || (string)json.@event != "display-info") return;
-            dynamic data = JsonConvert.DeserializeObject((string)json.data);
-            string text = data.text;
+            string text = JsonConvert.DeserializeObject<dynamic>(eventData.Data).text;
             var doc = new HtmlDocument();
             doc.LoadHtml(text);
             var links = doc.DocumentNode.Descendants("a");
             var profilePage = links.First().GetAttributeValue("href", null);
             var userId = Convert.ToInt32(profilePage.Split("/").Last());
-            try
-            { CheckForSolves(userId).Wait(5000); }
-            catch (Exception e) 
-            { Log.Error(e, $"There was an error while fetching solves for the user id {userId}"); }
+            CheckForSolves(userId).Wait(5000);
         }
 
         public async Task CheckForSolves(int userId)
