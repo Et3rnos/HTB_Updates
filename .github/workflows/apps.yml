@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: docker compose build
+      run: sudo docker compose build
     - name: Run
-      run: docker compose up -d --force-recreate
+      run: sudo docker compose up -d --force-recreate
