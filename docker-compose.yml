@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: htb_updates_frontend/Dockerfile
     ports:
-      - 80:80
+      - 8080:80
   htbupdatesbackend:
     image: ${DOCKER_REGISTRY-}htbupdatesbackend
     build:
