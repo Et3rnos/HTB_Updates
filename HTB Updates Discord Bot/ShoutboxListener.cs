@@ -55,7 +55,7 @@ namespace HTB_Updates_Discord_Bot
             var links = doc.DocumentNode.Descendants("a");
             var profilePage = links.First().GetAttributeValue("href", null);
             var userId = Convert.ToInt32(profilePage.Split("/").Last());
-            CheckForSolves(183581);
+            //CheckForSolves(183581);
             CheckForSolves(userId).Wait(5000);
         }
 
@@ -80,7 +80,7 @@ namespace HTB_Updates_Discord_Bot
             htbUser.Score = score;
 
             var oldSolves = htbUser.Solves;
-            oldSolves = new();
+            //oldSolves = new();
 
             var newSolves = currentSolves.Except(oldSolves, new SolveComparer()).ToList();
             newSolves.Reverse();
