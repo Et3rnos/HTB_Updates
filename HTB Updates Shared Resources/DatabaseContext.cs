@@ -9,10 +9,10 @@ namespace HTB_Updates_Shared_Resources
     public class DatabaseContext : DbContext
     {
         public DbSet<HTBUser> HTBUsers { get; set; }
+        public DbSet<GuildUser> GuildUsers { get; set; }
         public DbSet<DiscordUser> DiscordUsers { get; set; }
         public DbSet<DiscordGuild> DiscordGuilds { get; set; }
         public DbSet<Solve> Solves { get; set; }
-        public DbSet<Supporter> Supporters { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 

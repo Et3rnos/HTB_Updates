@@ -14,8 +14,8 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using Serilog;
-using HTB_Updates_Discord_Bot.Services;
 using HTB_Updates_Shared_Resources;
+using HTB_Updates_Shared_Resources.Services;
 
 namespace HTB_Updates_Discord_Bot
 {
@@ -148,7 +148,7 @@ namespace HTB_Updates_Discord_Bot
             context.DiscordGuilds.Remove(guild);
 
             //Clean unlinked htb users
-            var htbUsers = await context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            var htbUsers = await context.HTBUsers.Where(x => !x.GuildUsers.Any()).ToListAsync();
             context.HTBUsers.RemoveRange(htbUsers);
 
             await context.SaveChangesAsync();
@@ -161,13 +161,13 @@ namespace HTB_Updates_Discord_Bot
             var serviceProvider = scope.ServiceProvider;
 
             var context = serviceProvider.GetRequiredService<DatabaseContext>();
-            var discordUser = await context.DiscordUsers.FirstOrDefaultAsync(x => x.DiscordId == user.Id && x.Guild.GuildId == guild.Id);
+            var discordUser = await context.GuildUsers.FirstOrDefaultAsync(x => x.DiscordUser.DiscordId == user.Id && x.Guild.GuildId == guild.Id);
             if (discordUser == null) return;
 
-            context.DiscordUsers.Remove(discordUser);
+            context.GuildUsers.Remove(discordUser);
 
             //Clean unlinked htb users
-            var htbUsers = await context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            var htbUsers = await context.HTBUsers.Where(x => !x.GuildUsers.Any()).ToListAsync();
             context.HTBUsers.RemoveRange(htbUsers);
 
             await context.SaveChangesAsync();

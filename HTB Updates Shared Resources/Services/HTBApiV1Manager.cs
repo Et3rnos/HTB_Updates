@@ -1,4 +1,4 @@
-﻿using HTB_Updates_Discord_Bot.Models;
+﻿using HTB_Updates_Shared_Resources.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace HTB_Updates_Discord_Bot.Services
+namespace HTB_Updates_Shared_Resources.Services
 {
     public interface IHTBApiV1Service
     {

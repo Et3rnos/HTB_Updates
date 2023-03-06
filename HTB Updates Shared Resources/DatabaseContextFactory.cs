@@ -17,7 +17,7 @@ namespace HTB_Updates_Shared_Resources
             .AddJsonFile("appsettings.json", false)
             .Build();
 
-            var connectionString = configuration.GetValue<string>("ConnectionString");
+            var connectionString = configuration.GetConnectionString("Default");
 
             var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
             optionsBuilder.UseMySql(connectionString,

@@ -14,7 +14,6 @@ using HTB_Updates_Shared_Resources.Models.Database;
 using HTB_Updates_Shared_Resources.Models.Shared;
 using Discord;
 using Serilog;
-using HTB_Updates_Discord_Bot.Services;
 using System.IO;
 using SixLabors.ImageSharp;
 using Image = SixLabors.ImageSharp.Image;
@@ -23,6 +22,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using System.Net.Http;
+using HTB_Updates_Shared_Resources.Services;
 
 namespace HTB_Updates_Discord_Bot
 {
@@ -117,11 +117,12 @@ namespace HTB_Updates_Discord_Bot
                 return;
             }
 
-            await context.Entry(user).Collection(x => x.DiscordUsers).LoadAsync();
+            await context.Entry(user).Collection(x => x.GuildUsers).LoadAsync();
 
-            foreach (var dUser in user.DiscordUsers)
+            foreach (var dUser in user.GuildUsers)
             {
                 await context.Entry(dUser).Reference(x => x.Guild).LoadAsync();
+                await context.Entry(dUser).Reference(x => x.DiscordUser).LoadAsync();
 
                 foreach (var solve in newSolves) {
                     await AnnounceSolve(dUser, user, solve);
@@ -131,7 +132,7 @@ namespace HTB_Updates_Discord_Bot
             user.Solves.AddRange(newSolves);
         }
 
-        public async Task AnnounceSolve(DiscordUser dUser, HTBUser htbUser, Solve solve)
+        public async Task AnnounceSolve(GuildUser dUser, HTBUser htbUser, Solve solve)
         {
             try
             {
@@ -146,7 +147,7 @@ namespace HTB_Updates_Discord_Bot
             }
         }
 
-        public async Task<MemoryStream> GetSolvesImage(DiscordUser dUser, HTBUser htbUser, Solve solve)
+        public async Task<MemoryStream> GetSolvesImage(GuildUser dUser, HTBUser htbUser, Solve solve)
         {
             //var framePath = dUser.Verified ? "Files/gold_frame.png" : "Files/frame.png";
             var framePath = "Files/frame.png";
@@ -158,7 +159,7 @@ namespace HTB_Updates_Discord_Bot
             userImage.Mutate(x => x.Resize(65, 60));
             rootImage.Mutate(x => x.Resize(60, 60));
 
-            var user = await client.GetUserAsync(dUser.DiscordId);
+            var user = await client.GetUserAsync(dUser.DiscordUser.DiscordId);
             var avatar = userImage;
             if (user != null)
             {

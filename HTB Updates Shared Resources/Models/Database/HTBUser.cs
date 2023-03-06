@@ -15,7 +15,7 @@ namespace HTB_Updates_Shared_Resources.Models.Database
         public string Username { get; set; }
         public int Score { get; set; }
         public List<Solve> Solves { get; set; } = new List<Solve>();
-        public List<DiscordUser> DiscordUsers { get; set; } = new List<DiscordUser>();
+        public List<GuildUser> GuildUsers { get; set; } = new List<GuildUser>();
         public DateTime LastUpdated {get; set;}
     }
 }

@@ -51,11 +51,11 @@ namespace HTB_Updates_Discord_Bot.Modules
 
             //Get the pinged discord user if exists
             ulong guildId = Context.Guild.Id;
-            var dUser = await _context.DiscordUsers.AsQueryable().Include(x => x.HTBUser.DiscordUsers).FirstOrDefaultAsync(x => x.DiscordId == discordId && x.Guild.GuildId == guildId);
+            var dUser = await _context.GuildUsers.AsQueryable().Include(x => x.HTBUser.GuildUsers).FirstOrDefaultAsync(x => x.DiscordUser.DiscordId == discordId && x.Guild.GuildId == guildId);
 
             if (dUser != null)
             {
-                if (dUser.HTBUser.DiscordUsers.Count == 1)
+                if (dUser.HTBUser.GuildUsers.Count == 1)
                 {
                     //Delete the HTB user and the discord one if there is no other discord user linked to that HTB account
                     await _context.Entry(dUser.HTBUser).Collection(x => x.Solves).LoadAsync();
@@ -64,7 +64,7 @@ namespace HTB_Updates_Discord_Bot.Modules
                 else
                 {
                     //Delete just the discord user
-                    _context.DiscordUsers.Remove(dUser);
+                    _context.GuildUsers.Remove(dUser);
                 }
 
                 await _context.SaveChangesAsync();
@@ -242,10 +242,10 @@ namespace HTB_Updates_Discord_Bot.Modules
         [Summary("Prints some info about this bot")]
         public async Task About()
         {
-            var usersCount = await _context.DiscordUsers.CountAsync();
+            var usersCount = await _context.GuildUsers.CountAsync();
             var uniqueUsersCount = await _context.HTBUsers.CountAsync();
-            var serverMoreLinks = await _context.DiscordGuilds.OrderByDescending(x => x.DiscordUsers.Count).Select(x => new { Guild = x, Count = x.DiscordUsers.Count }).FirstOrDefaultAsync();
-            var bestPlayer = await _context.HTBUsers.OrderByDescending(x => x.Score).FirstOrDefaultAsync(x => x.DiscordUsers.Any(x => x.Verified));
+            var serverMoreLinks = await _context.DiscordGuilds.OrderByDescending(x => x.GuildUsers.Count).Select(x => new { Guild = x, Count = x.GuildUsers.Count }).FirstOrDefaultAsync();
+            var bestPlayer = await _context.HTBUsers.OrderByDescending(x => x.Score).FirstOrDefaultAsync(x => x.GuildUsers.Any(x => x.Verified));
 
             var eb = new EmbedBuilder();
             eb.WithColor(Color.DarkGreen);

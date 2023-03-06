@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HTB_Updates_Discord_Bot
+namespace HTB_Updates_Shared_Resources
 {
     [Serializable]
     class RateLimitingException : Exception

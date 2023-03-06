@@ -47,3 +47,24 @@ th, td {
 tr {
     line-height: 30px;
 }
+
+.settings-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border-width: 2px !important;
+}
+
+html::-webkit-scrollbar-track {
+    background-color: var(--bs-dark);
+}
+
+html::-webkit-scrollbar {
+    width: 10px;
+    background-color: none;
+}
+
+html::-webkit-scrollbar-thumb {
+    background-color: var(--bs-light);
+    border-radius: 5px;
+}

@@ -16,7 +16,7 @@ namespace HTB_Updates_Discord_Bot.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
+                .HasAnnotation("ProductVersion", "7.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.DiscordGuild", b =>
@@ -48,8 +48,25 @@ namespace HTB_Updates_Discord_Bot.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<bool>("Border")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<ulong>("DiscordId")
                         .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HTBUpdates_DiscordUsers");
+                });
+
+            modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.GuildUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiscordUserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("GuildId")
                         .HasColumnType("int");
@@ -62,11 +79,13 @@ namespace HTB_Updates_Discord_Bot.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DiscordUserId");
+
                     b.HasIndex("GuildId");
 
                     b.HasIndex("HTBUserId");
 
-                    b.ToTable("HTBUpdates_DiscordUsers");
+                    b.ToTable("HTBUpdates_GuildUsers");
                 });
 
             modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.HTBUser", b =>
@@ -90,26 +109,6 @@ namespace HTB_Updates_Discord_Bot.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HTBUpdates_HTBUsers");
-                });
-
-            modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.Supporter", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<bool>("Border")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<ulong>("DiscordId")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<string>("Slogan")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HTBUpdates_Supporters");
                 });
 
             modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Shared.Solve", b =>
@@ -158,19 +157,27 @@ namespace HTB_Updates_Discord_Bot.Migrations
                     b.ToTable("HTBUpdates_Solves");
                 });
 
-            modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.DiscordUser", b =>
+            modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.GuildUser", b =>
                 {
+                    b.HasOne("HTB_Updates_Shared_Resources.Models.Database.DiscordUser", "DiscordUser")
+                        .WithMany("GuildUsers")
+                        .HasForeignKey("DiscordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("HTB_Updates_Shared_Resources.Models.Database.DiscordGuild", "Guild")
-                        .WithMany("DiscordUsers")
+                        .WithMany("GuildUsers")
                         .HasForeignKey("GuildId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HTB_Updates_Shared_Resources.Models.Database.HTBUser", "HTBUser")
-                        .WithMany("DiscordUsers")
+                        .WithMany("GuildUsers")
                         .HasForeignKey("HTBUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("DiscordUser");
 
                     b.Navigation("Guild");
 
@@ -190,12 +197,17 @@ namespace HTB_Updates_Discord_Bot.Migrations
 
             modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.DiscordGuild", b =>
                 {
-                    b.Navigation("DiscordUsers");
+                    b.Navigation("GuildUsers");
+                });
+
+            modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.DiscordUser", b =>
+                {
+                    b.Navigation("GuildUsers");
                 });
 
             modelBuilder.Entity("HTB_Updates_Shared_Resources.Models.Database.HTBUser", b =>
                 {
-                    b.Navigation("DiscordUsers");
+                    b.Navigation("GuildUsers");
 
                     b.Navigation("Solves");
                 });

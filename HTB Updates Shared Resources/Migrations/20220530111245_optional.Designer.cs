@@ -12,7 +12,9 @@ namespace HTB_Updates_Shared_Resources.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
     [Migration("20220530111245_optional")]
+#pragma warning disable CS8981
     partial class optional
+#pragma warning restore CS8981
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

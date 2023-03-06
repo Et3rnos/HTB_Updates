@@ -30,7 +30,7 @@ namespace HTB_Updates_Website.Areas.Admin.Pages
         public async Task<IActionResult> OnGetAsync()
         {
             if (!_authenticationManager.ValidateRequest(HttpContext)) return Redirect("/Authorize");
-            DiscordGuilds = await _context.DiscordGuilds.Select(x => new DiscordGuildInfo { DiscordGuild = x, LinkedUsersCount = x.DiscordUsers.Count }).ToListAsync();
+            DiscordGuilds = await _context.DiscordGuilds.Select(x => new DiscordGuildInfo { DiscordGuild = x, LinkedUsersCount = x.GuildUsers.Count }).ToListAsync();
             return Page();
         }
     }

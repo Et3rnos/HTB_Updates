@@ -3,7 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using HTB_Updates_Shared_Resources;
 using HTB_Updates_Shared_Resources.Models.Database;
-using HTB_Updates_Discord_Bot.Services;
+using HTB_Updates_Shared_Resources.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -85,16 +85,27 @@ namespace HTB_Updates_Discord_Bot.Modules
                 await _context.HTBUsers.AddAsync(htbUser);
             }
 
+            //Create discord user if not exists
+            var discordUser = await _context.DiscordUsers.FirstOrDefaultAsync(x => x.DiscordId == Context.User.Id);
+            if (discordUser == null)
+            {
+                discordUser = new DiscordUser
+                {
+                    DiscordId = Context.User.Id
+                };
+                await _context.DiscordUsers.AddAsync(discordUser);
+            }
+
             //Get the current discord user if exists
             ulong discordId = Context.User.Id;
             ulong guildId = Context.Guild.Id;
-            var dUser = await _context.DiscordUsers.AsQueryable().FirstOrDefaultAsync(x => x.DiscordId == discordId && x.Guild.GuildId == guildId);
+            var dUser = await _context.GuildUsers.AsQueryable().FirstOrDefaultAsync(x => x.DiscordUser.DiscordId == discordId && x.Guild.GuildId == guildId);
 
             if (dUser == null)
             {
                 //Create a new discord user
-                dUser = new DiscordUser { DiscordId = discordId, Guild = dGuild, HTBUser = htbUser };
-                await _context.DiscordUsers.AddAsync(dUser);
+                dUser = new GuildUser { DiscordUser = discordUser, Guild = dGuild, HTBUser = htbUser };
+                await _context.GuildUsers.AddAsync(dUser);
             }
             else
             {
@@ -109,7 +120,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             }
 
             //Clean unlinked htb users
-            var htbUsers = await _context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            var htbUsers = await _context.HTBUsers.Where(x => !x.GuildUsers.Any()).ToListAsync();
             _context.HTBUsers.RemoveRange(htbUsers);
 
             await _context.SaveChangesAsync();
@@ -139,8 +150,8 @@ namespace HTB_Updates_Discord_Bot.Modules
                 return;
             }
 
-            var dUsers = await _context.DiscordUsers.AsQueryable()
-                .Where(x => x.DiscordId == Context.User.Id && x.HTBUser.HtbId == htbId && x.Verified == false)
+            var dUsers = await _context.GuildUsers.AsQueryable()
+                .Where(x => x.DiscordUser.DiscordId == Context.User.Id && x.HTBUser.HtbId == htbId && x.Verified == false)
                 .ToListAsync();
 
             if (!dUsers.Any())
@@ -175,15 +186,15 @@ namespace HTB_Updates_Discord_Bot.Modules
             //Get the current discord user if exists
             ulong discordId = Context.User.Id;
             ulong guildId = Context.Guild.Id;
-            var dUser = await _context.DiscordUsers.AsQueryable().Include(x => x.HTBUser.DiscordUsers).FirstOrDefaultAsync(x => x.DiscordId == discordId && x.Guild.GuildId == guildId);
+            var dUser = await _context.GuildUsers.AsQueryable().Include(x => x.HTBUser.GuildUsers).FirstOrDefaultAsync(x => x.DiscordUser.DiscordId == discordId && x.Guild.GuildId == guildId);
 
             if (dUser != null)
             {
                 
-                _context.DiscordUsers.Remove(dUser);
+                _context.GuildUsers.Remove(dUser);
 
                 //Clean unlinked htb users
-                var htbUsers = await _context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+                var htbUsers = await _context.HTBUsers.Where(x => !x.GuildUsers.Any()).ToListAsync();
                 _context.HTBUsers.RemoveRange(htbUsers);
 
                 await _context.SaveChangesAsync();
@@ -218,7 +229,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             //Get the target user if exists
             ulong discordId = pingedUser.Id;
             ulong guildId = Context.Guild.Id;
-            var dUser = await _context.DiscordUsers.AsQueryable().Include(x => x.HTBUser.Solves).FirstOrDefaultAsync(x => x.DiscordId == discordId && x.Guild.GuildId == guildId);
+            var dUser = await _context.GuildUsers.AsQueryable().Include(x => x.HTBUser.Solves).FirstOrDefaultAsync(x => x.DiscordUser.DiscordId == discordId && x.Guild.GuildId == guildId);
 
             //Send error embed if no discord embed was found
             if (dUser == null)
@@ -275,40 +286,40 @@ namespace HTB_Updates_Discord_Bot.Modules
 
             //Get the linked discord users in the guild
             ulong guildId = Context.Guild.Id;
-            var dUsers = await _context.DiscordUsers.AsQueryable().Include(x => x.HTBUser.Solves).Include(x => x.Guild).Where(x => x.Guild.GuildId == guildId).ToListAsync();
+            var dUsers = await _context.GuildUsers.AsQueryable().Include(x => x.HTBUser.Solves).Include(x => x.Guild).Include(x => x.DiscordUser).Where(x => x.Guild.GuildId == guildId).ToListAsync();
 
             var htbUsers = dUsers.Select(x => x.HTBUser).Distinct();
 
             foreach (var htbUser in htbUsers)
             {
                 var solves = htbUser.Solves.Where(x => x.Name.ToLower() == name.ToLower()).ToList();
-                var linkedUsers = htbUser.DiscordUsers.Where(x => x.Guild.GuildId == guildId).ToList();
+                var linkedUsers = htbUser.GuildUsers.Where(x => x.Guild.GuildId == guildId).ToList();
                 if (solves.Count == 2 && solves.First().ObjectType == "machine")
                 {
                     foreach (var lUser in linkedUsers)
                     {
-                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordId}> ({htbUser.Username}) - Root\n";
+                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordUser.DiscordId}> ({htbUser.Username}) - Root\n";
                     }
                 }
                 else if (solves.Count == 1 && solves.First().ObjectType == "machine" && solves.First().Type == "root")
                 {
                     foreach (var lUser in linkedUsers)
                     {
-                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordId}> ({htbUser.Username}) - Root\n";
+                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordUser.DiscordId}> ({htbUser.Username}) - Root\n";
                     }
                 }
                 else if (solves.Count == 1 && solves.First().ObjectType == "machine" && solves.First().Type == "user")
                 {
                     foreach (var lUser in linkedUsers)
                     {
-                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordId}> ({htbUser.Username}) - User\n";
+                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordUser.DiscordId}> ({htbUser.Username}) - User\n";
                     }
                 }
                 else if (solves.Count == 1 && solves.First().ObjectType == "challenge")
                 {
                     foreach (var lUser in linkedUsers)
                     {
-                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordId}> ({htbUser.Username})\n";
+                        eb.Description += $":small_blue_diamond: <@{lUser.DiscordUser.DiscordId}> ({htbUser.Username})\n";
                     }
                 }
             }
@@ -332,7 +343,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             eb.WithColor(Color.DarkGreen);
 
             //Check if the guild is set up before proceed
-            var dGuild = await _context.DiscordGuilds.Include(x => x.DiscordUsers.OrderByDescending(x => x.HTBUser.Score).Take(10)).ThenInclude(x => x.HTBUser).FirstOrDefaultAsync(x => x.GuildId == Context.Guild.Id);
+            var dGuild = await _context.DiscordGuilds.Include(x => x.GuildUsers.OrderByDescending(x => x.HTBUser.Score).Take(10)).ThenInclude(x => x.HTBUser).Include(x => x.GuildUsers).ThenInclude(x => x.DiscordUser).FirstOrDefaultAsync(x => x.GuildId == Context.Guild.Id);
             if (dGuild == null)
             {
                 eb.WithTitle("Leaderboard Error");
@@ -342,7 +353,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             }
 
             //Say whatever you want, I'm not removing this
-            var dUsers = dGuild.DiscordUsers.OrderByDescending(x => x.HTBUser.Score).Take(10).ToList();
+            var dUsers = dGuild.GuildUsers.OrderByDescending(x => x.HTBUser.Score).Take(10).ToList();
 
             if (!dUsers.Any())
             {
@@ -355,7 +366,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             eb.WithTitle("Server's Leaderboard");
             foreach (var dUser in dUsers)
             {
-                eb.Description += $":small_blue_diamond: <@{dUser.DiscordId}> ({dUser.HTBUser.Username}) {(dUser.Verified ? ":star: " : "")}- {dUser.HTBUser.Score} points\n";
+                eb.Description += $":small_blue_diamond: <@{dUser.DiscordUser.DiscordId}> ({dUser.HTBUser.Username}) {(dUser.Verified ? ":star: " : "")}- {dUser.HTBUser.Score} points\n";
             }
 
             await ReplyAsync(embed: eb.Build());
@@ -370,7 +381,7 @@ namespace HTB_Updates_Discord_Bot.Modules
             var eb = new EmbedBuilder();
             eb.WithColor(Color.DarkGreen);
 
-            var htbUsers = await _context.HTBUsers.Where(x => x.DiscordUsers.Any(x => x.Verified)).OrderByDescending(x => x.Score).Take(10).ToListAsync();
+            var htbUsers = await _context.HTBUsers.Where(x => x.GuildUsers.Any(x => x.Verified)).OrderByDescending(x => x.Score).Take(10).ToListAsync();
 
             eb.WithTitle("Global Leaderboard");
             foreach (var user in htbUsers)

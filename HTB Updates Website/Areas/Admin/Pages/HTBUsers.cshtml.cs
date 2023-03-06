@@ -31,7 +31,7 @@ namespace HTB_Updates_Website.Areas.Admin.Pages
         public async Task<IActionResult> OnGetAsync()
         {
             if (!_authenticationManager.ValidateRequest(HttpContext)) return Redirect("/Authorize");
-            HTBUsers = await _context.HTBUsers.Select(x => new HTBUserInfo { HTBUser = x, DiscordUsersCount = x.DiscordUsers.Count, SolvesCount = x.Solves.Count }).ToListAsync();
+            HTBUsers = await _context.HTBUsers.Select(x => new HTBUserInfo { HTBUser = x, DiscordUsersCount = x.GuildUsers.Count, SolvesCount = x.Solves.Count }).ToListAsync();
             return Page();
         }
     }

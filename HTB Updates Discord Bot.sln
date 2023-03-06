@@ -5,9 +5,15 @@ VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTB Updates Discord Bot", "HTB Updates Discord Bot\HTB Updates Discord Bot.csproj", "{97845B90-313F-44CE-9897-3B3514CE3F7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTB Updates Shared Resources", "HTB Updates Shared Resources\HTB Updates Shared Resources.csproj", "{B887E808-DC45-417B-92FA-CAEE22926080}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTB Updates Shared Resources", "HTB Updates Shared Resources\HTB Updates Shared Resources.csproj", "{B887E808-DC45-417B-92FA-CAEE22926080}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTB Updates Website", "HTB Updates Website\HTB Updates Website.csproj", "{4988731C-874D-48CA-BD98-EE6A6D8FE550}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTB Updates Website", "HTB Updates Website\HTB Updates Website.csproj", "{4988731C-874D-48CA-BD98-EE6A6D8FE550}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "htb_updates_frontend", "htb_updates_frontend\htb_updates_frontend.esproj", "{A1B9E24D-82E1-4178-83B4-D6B3070281EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "htb_updates_backend", "htb_updates_backend\htb_updates_backend.csproj", "{A05041FF-2D6A-4FE4-85F2-0BC02292852B}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6FE618CC-44E8-48AF-8E4B-7E469B2F13F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +33,20 @@ Global
 		{4988731C-874D-48CA-BD98-EE6A6D8FE550}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4988731C-874D-48CA-BD98-EE6A6D8FE550}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4988731C-874D-48CA-BD98-EE6A6D8FE550}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B9E24D-82E1-4178-83B4-D6B3070281EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B9E24D-82E1-4178-83B4-D6B3070281EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B9E24D-82E1-4178-83B4-D6B3070281EC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A1B9E24D-82E1-4178-83B4-D6B3070281EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B9E24D-82E1-4178-83B4-D6B3070281EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B9E24D-82E1-4178-83B4-D6B3070281EC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A05041FF-2D6A-4FE4-85F2-0BC02292852B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A05041FF-2D6A-4FE4-85F2-0BC02292852B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A05041FF-2D6A-4FE4-85F2-0BC02292852B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A05041FF-2D6A-4FE4-85F2-0BC02292852B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FE618CC-44E8-48AF-8E4B-7E469B2F13F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FE618CC-44E8-48AF-8E4B-7E469B2F13F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FE618CC-44E8-48AF-8E4B-7E469B2F13F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FE618CC-44E8-48AF-8E4B-7E469B2F13F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

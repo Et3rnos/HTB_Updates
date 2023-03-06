@@ -1,5 +1,5 @@
-﻿using HTB_Updates_Discord_Bot.Models;
-using HTB_Updates_Discord_Bot.Models.Api;
+﻿using HTB_Updates_Shared_Resources.Models;
+using HTB_Updates_Shared_Resources.Models.Api;
 using HTB_Updates_Shared_Resources.Models.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +17,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HTB_Updates_Discord_Bot.Services
+namespace HTB_Updates_Shared_Resources.Services
 {
     public interface IHTBApiV4Service
     {
@@ -39,8 +39,6 @@ namespace HTB_Updates_Discord_Bot.Services
 
         private async Task FillApiToken()
         {
-            Log.Information("Generating a new API v4 token");
-
             if (DateTime.Now.Subtract(tokenGenerationTime).TotalMinutes < 30)
                 throw new RateLimitingException("The bot attempted to login twice in just 30 minutes");
             tokenGenerationTime = DateTime.Now;

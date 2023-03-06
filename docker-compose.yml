@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  htbupdatesdiscordbot:
+    image: ${DOCKER_REGISTRY-}htbupdatesdiscordbot
+    build:
+      context: .
+      dockerfile: HTB Updates Discord Bot/Dockerfile
+  htbupdatesfrontend:
+    image: ${DOCKER_REGISTRY-}htbupdatesfrontend
+    build:
+      context: .
+      dockerfile: htb_updates_frontend/Dockerfile
+    ports:
+      - 80:80
+  htbupdatesbackend:
+    image: ${DOCKER_REGISTRY-}htbupdatesbackend
+    build:
+      context: .
+      dockerfile: htb_updates_backend/Dockerfile

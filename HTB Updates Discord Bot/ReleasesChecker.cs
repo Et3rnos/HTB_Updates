@@ -13,8 +13,6 @@ using HTB_Updates_Shared_Resources.Models.Database;
 using HTB_Updates_Shared_Resources;
 using Discord;
 using Serilog;
-using HTB_Updates_Discord_Bot.Services;
-using HTB_Updates_Discord_Bot.Models.Api;
 using SixLabors.ImageSharp;
 using Image = SixLabors.ImageSharp.Image;
 using SixLabors.Fonts;
@@ -24,6 +22,8 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using System.Net.Http;
 using System.Numerics;
 using System.IO;
+using HTB_Updates_Shared_Resources.Services;
+using HTB_Updates_Shared_Resources.Models.Api;
 
 namespace HTB_Updates_Discord_Bot
 {
@@ -132,7 +132,7 @@ namespace HTB_Updates_Discord_Bot
             Image osImage;
             if (machine.Os == "Windows") osImage = await Image.LoadAsync<Rgba32>("Files/win.png");
             else osImage = await Image.LoadAsync<Rgba32>("Files/linux.png");
-            var height = (int)(((float)osImage.Size().Height / osImage.Size().Width) * 100);
+            var height = (int)(((float)osImage.Size.Height / osImage.Size.Width) * 100);
             osImage.Mutate(x => x.Resize(100, height));
 
             var color = SixLabors.ImageSharp.Color.FromRgb(204, 204, 204);

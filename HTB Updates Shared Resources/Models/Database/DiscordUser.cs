@@ -11,10 +11,8 @@ namespace HTB_Updates_Shared_Resources.Models.Database
         [Key]
         public int Id { get; set; }
         public ulong DiscordId { get; set; }
-        public int GuildId { get; set; }
-        public DiscordGuild Guild { get; set; }
-        public int HTBUserId { get; set; }
-        public HTBUser HTBUser { get; set; }
-        public bool Verified { get; set; } = false;
+        public List<GuildUser> GuildUsers { get; set; }
+
+        public bool Border { get; set; }
     }
 }

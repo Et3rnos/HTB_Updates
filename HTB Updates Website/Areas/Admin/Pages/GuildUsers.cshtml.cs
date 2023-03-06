@@ -8,28 +8,23 @@ using Serilog;
 
 namespace HTB_Updates_Website.Areas.Admin.Pages
 {
-    public class DiscordUsersModel : PageModel
+    public class GuildUsersModel : PageModel
     {
         private readonly DatabaseContext _context;
         private readonly IAuthenticationManager _authenticationManager;
 
-        public List<DiscordUserInfo> DiscordUsers { get; set; }
+        public List<GuildUser> GuildUsers { get; set; }
 
-        public DiscordUsersModel(DatabaseContext context, IAuthenticationManager authenticationManager)
+        public GuildUsersModel(DatabaseContext context, IAuthenticationManager authenticationManager)
         {
             _context = context;
             _authenticationManager = authenticationManager;
         }
 
-        public class DiscordUserInfo
-        {
-            public DiscordUser DiscordUser { get; set; }
-        }
-
         public async Task<IActionResult> OnGetAsync()
         {
             if (!_authenticationManager.ValidateRequest(HttpContext)) return Redirect("/Authorize");
-            DiscordUsers = await _context.DiscordUsers.Select(x => new DiscordUserInfo { DiscordUser = x }).ToListAsync();
+            GuildUsers = await _context.GuildUsers.ToListAsync();
             return Page();
         }
     }

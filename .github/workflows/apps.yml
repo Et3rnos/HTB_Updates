@@ -1,0 +1,15 @@
+name: Production Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: apps-azure
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: docker compose build
+    - name: Run
+      run: docker compose up -d --force-recreate

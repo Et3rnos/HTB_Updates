@@ -70,7 +70,7 @@ namespace HTB_Updates_Discord_Bot.Modules
                 await ReplyAsync("No useless guilds were found.");
             }
 
-            var uselessHtbUsers = await _context.HTBUsers.Where(x => !x.DiscordUsers.Any()).ToListAsync();
+            var uselessHtbUsers = await _context.HTBUsers.Where(x => !x.GuildUsers.Any()).ToListAsync();
             if (uselessHtbUsers.Any())
             {
                 await ReplyAsync($"{uselessHtbUsers.Count()} useless HTB users were found:\n```\n{string.Join('\n', uselessHtbUsers.Select(x => x.Username))}\n```");

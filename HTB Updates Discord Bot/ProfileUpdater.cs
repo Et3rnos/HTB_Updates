@@ -14,7 +14,7 @@ using HTB_Updates_Shared_Resources.Models.Database;
 using HTB_Updates_Shared_Resources.Models.Shared;
 using Discord;
 using Serilog;
-using HTB_Updates_Discord_Bot.Services;
+using HTB_Updates_Shared_Resources.Services;
 
 namespace HTB_Updates_Discord_Bot
 {
