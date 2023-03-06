@@ -19,7 +19,7 @@ const Home = () => {
                     color="primary"
                     sx={{ position: "fixed", top: 0, right: 0, borderRadius: 0, borderBottomLeftRadius: 20, paddingX: 6, paddingY: 2 }}
                     component={RouterLink}
-                    to={"https://discord.com/api/oauth2/authorize?client_id=812258088093876264&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&response_type=code&scope=identify&state=" + state}
+                    to={"https://discord.com/api/oauth2/authorize?client_id=812258088093876264&redirect_uri=https%3A%2F%2Fhtbupdates.com%2Fcallback&response_type=code&scope=identify&state=" + state}
                 >
                     <LoginIcon sx={{marginRight: 1}} /> Login
                 </Button>

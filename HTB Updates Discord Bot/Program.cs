@@ -58,7 +58,7 @@ namespace HTB_Updates_Discord_Bot
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
 
-            var connectionString = configuration.GetValue<string>("ConnectionString");
+            var connectionString = configuration.GetConnectionString("Default");
 
             var map = new ServiceCollection()
                 .AddSingleton(configuration)

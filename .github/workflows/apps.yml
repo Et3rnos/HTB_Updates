@@ -9,6 +9,8 @@ jobs:
     runs-on: apps-azure
     steps:
     - uses: actions/checkout@v2
+    - name: Copy appsettings.json
+      run: cp ~/appsettings.json htb_updates_backend && cp ~/appsettings.json "HTB Updates Discord Bot"
     - name: Build
       run: sudo docker compose build
     - name: Run
