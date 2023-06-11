@@ -18,8 +18,10 @@
     ]
   },
   "Token": "",
-  "ConnectionString": "server=;port=;database=;user=;password=",
-  "HTBUsername": "", //AKA email
+  "ConnectionStrings": {
+    "Default": "server=;port=;database=;user=;password="
+  },
+  "HTBUsername": "", // AKA email
   "HTBPassword": "",
   "V1ApiToken": ""
 }

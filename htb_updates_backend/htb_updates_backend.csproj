@@ -24,4 +24,6 @@
     <ProjectReference Include="..\HTB Updates Shared Resources\HTB Updates Shared Resources.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json_1sample__JsonSchema="https://json.schemastore.org/appsettings.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

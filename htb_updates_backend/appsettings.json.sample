@@ -1,0 +1,22 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "Discord": {
+    "ClientId": "",
+    "ClientSecret": "",
+    "RedirectUri": "https://htbupdates.com/callback" // change this to your domain
+  },
+  "JWT": {
+    "ValidAudience": "*",
+    "ValidIssuer": "http://localhost:5000",
+    "Secret": ""
+  },
+  "ConnectionStrings": {
+    "Default": "server=;port=;database=;user=;password="
+  }
+}

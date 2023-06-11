@@ -1,37 +1,39 @@
-# HTB_Updates
-A Discord Bot that announces your members' Hack The Box solves.
-To start own instance you need to configure it yourselve.
+# HTB Updates
 
-  1. Create own discord bot and set right permissions
-  2. Make changes to appsettings.json
-  3. You can use our dockerfile and docker-compose.
+A Discord bot that announces your members' Hack The Box solves.
 
-# Set up
-# 1. Discord bot permissions
-https://discord.com/developers/docs/intro -> https://discord.com/developers/applications
+There are 2 ways to use this bot: you can either invite it to your discord server or you can create your own instance of it.
 
+## Invite the bot
 
+To invite this bot to your server all you need to do is visit this link:
 
-- Create "New Application" 
-- Navigate to /Bot section Check all   
-- "Privileged Gateway Intents" 
--  Check "Send messages" and "Embed links"    in "Bot permissions"
+[https://discord.com/api/oauth2/authorize?client_id=806824180074938419&permissions=2048&scope=bot](https://discord.com/api/oauth2/authorize?client_id=806824180074938419&permissions=2048&scope=bot)
 
-# 2. Configure appsettings.json
-- Copy Bot token to appsettings.json file parameter "Token"
-- Add HTBUsername and HTBPassword
-- Retrieve "App Tokens" from HTB(https://app.hackthebox.com/profile/settings)
-- Set right "ConnectionString" (Make sure provided user has enough privileges)
+## Creating your own instance
 
-# 3. Discord server
-- Under "Applications" section, click on your bot application, and open the OAuth2 page.
-- Navigate to URL Generator
-- Under scopes check bot
-- List of permissions will appear. Check "Send messages" and "Embed links".
-- Copy&Paste generated URL to the browser and invite bot to your server.
+To create your own instance you need to follow some certain steps.
 
-# 4. Extra tips
-- You might want to change dockerfile or docker-compose
-- Make sure Bot permissions are right
-- Make sure you have permissions on discord server where you want to add bot
-- Make sure Database "ConnectionString" is set right
+This guide will assume you have a discord bot and a MySQL server already set up.
+
+### Clone this repository
+
+Just run `git clone https://github.com/Et3rnos/HTB_Updates`.
+
+### Creating the configuration
+
+There are 2 configuration files that you must create, one for the discord bot application and the other for the website backend (if you plan on using it).
+
+Templates for these files can be found at `./HTB Updates Discord Bot/appsettings.json.sample` and `./htb_updates_backend/appsettings.json.sample`.
+
+You can simply modify them and rename them to `appsettings.json` afterwards.
+
+### Launching the application
+
+This step requires you to have docker installed.
+
+Simply run `docker compose up -d`.
+
+## Support Me
+
+Want to support the development of this project? Consider supporting me at [https://patreon.com/et3rnos](https://patreon.com/et3rnos).
