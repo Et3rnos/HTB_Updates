@@ -2,19 +2,22 @@ version: '3.4'
 
 services:
   htbupdatesdiscordbot:
-    image: ${DOCKER_REGISTRY-}htbupdatesdiscordbot
+    image: htbupdatesdiscordbot
     build:
       context: .
       dockerfile: HTB Updates Discord Bot/Dockerfile
+    restart: always
   htbupdatesfrontend:
-    image: ${DOCKER_REGISTRY-}htbupdatesfrontend
+    image: htbupdatesfrontend
     build:
       context: .
       dockerfile: htb_updates_frontend/Dockerfile
     ports:
       - 8080:80
+    restart: always
   htbupdatesbackend:
-    image: ${DOCKER_REGISTRY-}htbupdatesbackend
+    image: htbupdatesbackend
     build:
       context: .
       dockerfile: htb_updates_backend/Dockerfile
+    restart: always
