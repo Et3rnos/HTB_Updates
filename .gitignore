@@ -346,3 +346,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/deploy.bat
+/deploy_core.bat
+/images.tar
